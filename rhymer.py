@@ -46,7 +46,7 @@ def DoCommand(message) :
 @bot.message_handler(func=lambda message:True, content_types=["text"])  # это декоратор, вызывается для любого текста кроме комманд
 def getRhymes(message): 
    last_word = wd.tokenize(message.text)[-1]
-   print u'Получено слово :', lastword
+   print u'Получено слово :', last_word
    accented = wd.p.setAccent(last_word)
    # так как setAccent возвращает слово неизменным, если не сумел проставить ударение, то
    # грубо проверяем есть ли знак ударения в слове
