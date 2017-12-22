@@ -16,25 +16,59 @@ sys.path.append('../elektrybalt/')
 
 import wd
 
-import config
 import telebot
+# RhymerBot
+token = '405098465:AAHfeF-kBFK0WWc5DAPY4qVLctxxv-Loxqs'
+helloString = u"""
+Привет,
+я бот рифмоплет, могу найти рифму к любому русскому слову,
+ну или почти к любому
+
+Просто введите слово и я отвечу рифмой
+"""
+
+#документация к TelegramBotAPI
+bot = telebot.TeleBot(token)
+
+# обработка комманд боту
+@bot.message_handler(commands=["help", "setup", "start", "uups"])  # это декоратор
+def DoCommand(message) :
+   if message.text == "/help" or message.text == "/start" :
+      bot.send_message(message.chat.id, helloString)
+   elif message.text == "/setup":
+      bot.send_message(message.chat.id, "oooouups")
+   else :
+      print 'Undefined command ', message.text
+      bot.send_message(message.chat.id, 'undefined command')
 
 
-bot = telebot.TeleBot(config.token)
-
-@bot.message_handler(func=lambda message:True, content_types=["text"])
-def reverse_all_messages(message): 
+# обработка входящих слов
+@bot.message_handler(func=lambda message:True, content_types=["text"])  # это декоратор, вызывается для любого текста кроме комманд
+def getRhymes(message): 
    last_word = wd.tokenize(message.text)[-1]
    accented = wd.p.setAccent(last_word)
-   if len(accented) > 0 :
+   # так как setAccent возвращает слово неизменным, если не сумел проставить ударение, то
+   # грубо проверяем есть ли знак ударения в слове
+   if u"'" in accented[0] :
       rhymes = wd.p.simpleRhyme(accented[0])
-   
-   if len(rhymes) > 0 :
-      ans = "Find rhymes for " + accented[0] + ":\n"
-      ans += '\n'.join(rhymes)
    else :
-      ans = 'Cannot find a rhyme for ' + accented[0] + ":("
-   bot.send_message(message.chat.id, ans)
+      bot.send_message(message.chat.id, u'Не могу проставить ударение в слове ' + last_word + u":(")
+      return
+   
+   # телеграм не берет сообщения длиной больше чем 4096 символов
+   # поэтому, если у нас большой список рифм, то разбиваем его на части по 50 слов
+   if len(rhymes) > 0 :
+      ans = u"Ищем рифму к слову (" + accented[0] + u"): Всего найдено " +unicode(len(rhymes)) + u" вариантов\n"
+      c = 0
+      while c < len(rhymes) :
+         ans += '\n'.join(rhymes[c: c+50])
+         bot.send_message(message.chat.id, ans)
+         ans = ""
+         c += 50
+   else :
+      bot.send_message(message.chat.id, u'Не могу найти рифму к слову ' + accented[0] + u":(")
+      
+   
    
 
 if __name__ == '__main__':
