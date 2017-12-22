@@ -46,6 +46,7 @@ def DoCommand(message) :
 @bot.message_handler(func=lambda message:True, content_types=["text"])  # это декоратор, вызывается для любого текста кроме комманд
 def getRhymes(message): 
    last_word = wd.tokenize(message.text)[-1]
+   print u'Получено слово :', lastword
    accented = wd.p.setAccent(last_word)
    # так как setAccent возвращает слово неизменным, если не сумел проставить ударение, то
    # грубо проверяем есть ли знак ударения в слове
@@ -59,6 +60,7 @@ def getRhymes(message):
    # поэтому, если у нас большой список рифм, то разбиваем его на части по 50 слов
    if len(rhymes) > 0 :
       ans = u"Ищем рифму к слову (" + accented[0] + u"): Всего найдено " +unicode(len(rhymes)) + u" вариантов\n"
+      print u"): Всего найдено " +unicode(len(rhymes)) + u" вариантов\n"
       c = 0
       while c < len(rhymes) :
          ans += '\n'.join(rhymes[c: c+50])
@@ -67,7 +69,7 @@ def getRhymes(message):
          c += 50
    else :
       bot.send_message(message.chat.id, u'Не могу найти рифму к слову ' + accented[0] + u":(")
-      
+      print u'Не могу найти рифму к слову ' + accented[0] + u":("
    
    
 
