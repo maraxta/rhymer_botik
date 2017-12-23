@@ -14,6 +14,10 @@ readline.parse_and_bind("tab: complete")
 import sys
 sys.path.append('../elektrybalt/')
 
+
+from time import sleep
+
+# verse detector
 import wd
 
 import telebot
@@ -67,6 +71,7 @@ def getRhymes(message):
          bot.send_message(message.chat.id, ans)
          ans = ""
          c += 50
+         sleep(1)
    else :
       bot.send_message(message.chat.id, u'Не могу найти рифму к слову ' + accented[0] + u":(")
       print u'Не могу найти рифму к слову ' + accented[0] + u":("
