@@ -2,6 +2,13 @@
 #
 #
 # бот рифмовальщик
+#
+# чтобы запустить его без привязки к терминалу, надо
+#
+# export PYTHONIOENCODING=utf-8
+# nohup python rhumer_botik.py &
+#
+# все, можно выходить, вывод будет находится в файлу ./nohup.out
 
 # вау, чтобы работало автодополнение по нажатию Tab
 # надо только поискать вопрос на SO: How do i add tab completion to python shell
@@ -57,11 +64,12 @@ def getRhymes(message):
    if u"'" in accented[0] :
       rhymes = wd.p.simpleRhyme(accented[0])
    else :
-      bot.send_message(message.chat.id, u'Не могу проставить ударение в слове ' + last_word + u":(")
+      bot.send_message(message.chat.id, u'Не могу проставить ударение в слове ' + last_word + u":(\nПопробуйте передать слово с апострофом ' после ударной гласной")
       return
    
    # телеграм не берет сообщения длиной больше чем 4096 символов
    # поэтому, если у нас большой список рифм, то разбиваем его на части по 50 слов
+   #
    if len(rhymes) > 0 :
       ans = u"Ищем рифму к слову (" + accented[0] + u"): Всего найдено " +unicode(len(rhymes)) + u" вариантов\n"
       print u"): Всего найдено " +unicode(len(rhymes)) + u" вариантов\n"
@@ -71,6 +79,8 @@ def getRhymes(message):
          bot.send_message(message.chat.id, ans)
          ans = ""
          c += 50
+         # телеграм банит, если отправить много сообщений одновременно, 
+         # добавим задержку на секунду между сообщениями
          sleep(1)
    else :
       bot.send_message(message.chat.id, u'Не могу найти рифму к слову ' + accented[0] + u":(")
