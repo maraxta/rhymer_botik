@@ -90,5 +90,11 @@ def getRhymes(message):
 
 if __name__ == '__main__':
    print 'Bot running'
-   bot.polling(none_stop=True)
+   # пробуем не дать упасть при ошибке доступа к телеграмму
+   while True :
+      try : 
+         bot.polling(none_stop=True)
+      except Exception as inst :
+         print u'ErrorType ', inst
+         sleep(10)
 
